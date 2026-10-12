@@ -1,0 +1,16 @@
+stateDiagram-v2
+  [*] --> CREATED
+  CREATED --> UPLOADING
+  UPLOADING --> QUEUED: upload verified + outbox committed
+  QUEUED --> PROCESSING: worker lease
+  PROCESSING --> EVALUATING
+  EVALUATING --> COMPLETED: validated result durable
+  EVALUATING --> REVIEW_REQUIRED: low confidence / policy
+  REVIEW_REQUIRED --> COMPLETED: reviewer accepts
+  REVIEW_REQUIRED --> FAILED: reviewer rejects
+  PROCESSING --> RETRY_WAIT: retryable error
+  RETRY_WAIT --> QUEUED: backoff elapsed
+  PROCESSING --> FAILED: permanent error / attempts exhausted
+  CREATED --> CANCELLED
+  UPLOADING --> CANCELLED
+  QUEUED --> CANCELLED

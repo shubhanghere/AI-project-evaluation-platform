@@ -1,0 +1,19 @@
+flowchart LR
+  Student[Student / Reviewer] -->|HTTPS| ALB[ALB + NGINX ingress]
+  ALB --> API[Stateless FastAPI API]
+  API --> PG[(RDS PostgreSQL)]
+  API --> S3[(Private S3 assets)]
+  API --> Outbox[(Transactional outbox)]
+  Outbox --> Relay[Outbox relay]
+  Relay --> Q[SQS evaluation queue]
+  Q --> W[Isolated evaluation workers]
+  W --> S3
+  W --> PG
+  W --> Parser[Safe extract / parse]
+  Parser --> Index[Chunk + metadata + embeddings]
+  Index --> V[(pgvector / full-text)]
+  W --> LLM[Provider adapter / hosted LLM]
+  API --> Notify[Notification adapter]
+  W --> Notify
+  API --> Obs[Logs, metrics, traces, alarms]
+  W --> Obs

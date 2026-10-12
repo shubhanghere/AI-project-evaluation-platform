@@ -1,0 +1,3 @@
+# AWS deployment design
+
+The proposed topology and security boundaries are in `../../docs/architecture/diagrams/deployment.mmd` and the primary report. Use an ALB for public TLS termination and ECS services in private subnets for the API, outbox relay, and worker. Use RDS PostgreSQL, S3 with private access, SQS plus DLQ, task IAM roles, Secrets Manager, CloudWatch, and alarms. Scale workers from backlog/age while capping concurrency to provider quotas. Restrict worker egress to approved provider endpoints and AWS endpoints. Infrastructure as code, account setup, cost estimates, and an actual deployment are outside this PoC and remain unverified.

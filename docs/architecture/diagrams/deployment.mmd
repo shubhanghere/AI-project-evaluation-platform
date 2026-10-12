@@ -1,0 +1,17 @@
+flowchart TB
+  Internet --> DNS[Route 53 + TLS]
+  DNS --> ALB[Public ALB]
+  ALB --> NGINX[NGINX ingress / rate limit]
+  NGINX --> API[ECS API tasks in private subnets]
+  API --> RDS[(RDS PostgreSQL private subnet)]
+  API --> S3[(S3 private access endpoint)]
+  API --> Outbox[Outbox relay ECS service]
+  Outbox --> SQS[SQS + DLQ]
+  SQS --> Workers[ECS worker service / autoscale on backlog]
+  Workers --> S3
+  Workers --> RDS
+  Workers --> LLM[Allowlisted provider egress]
+  API --> CW[CloudWatch + OpenTelemetry collector]
+  Workers --> CW
+  Secrets[Secrets Manager + task IAM roles] -. inject at runtime .-> API
+  Secrets -. inject at runtime .-> Workers

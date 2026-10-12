@@ -1,0 +1,3 @@
+# System architecture
+
+The system and component responsibilities are presented in `../../output/submission-report.md`; Mermaid source is in `diagrams/system-architecture.mmd`. A stateless API accepts small metadata and controls upload/job lifecycle. PostgreSQL owns transactional state, private object storage owns bytes, and SQS delivers job identifiers to isolated workers. Workers invoke parsing/retrieval and a provider adapter, then persist validated criterion evidence and deterministic scores. A human-review queue handles low-confidence outputs. Observability spans API, relay, queue, worker, and provider boundaries.

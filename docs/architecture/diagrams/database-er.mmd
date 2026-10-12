@@ -1,0 +1,29 @@
+erDiagram
+  USERS ||--o{ SUBMISSIONS : creates
+  COURSES ||--o{ ASSIGNMENTS : contains
+  ASSIGNMENTS ||--o{ SUBMISSIONS : receives
+  SUBMISSIONS ||--o{ SUBMISSION_ASSETS : contains
+  SUBMISSIONS ||--o{ EVALUATION_JOBS : queues
+  RUBRICS ||--o{ RUBRIC_VERSIONS : versions
+  RUBRIC_VERSIONS ||--|{ RUBRIC_CRITERIA : defines
+  RUBRIC_VERSIONS ||--o{ EVALUATION_JOBS : snapshots
+  EVALUATION_JOBS ||--o{ EVALUATION_ATTEMPTS : attempts
+  EVALUATION_JOBS ||--o| EVALUATION_RESULTS : produces
+  EVALUATION_RESULTS ||--|{ CRITERION_SCORES : details
+  EVALUATION_JOBS ||--o{ HUMAN_REVIEWS : reviewed_by
+  SUBMISSIONS ||--o{ EVALUATION_EVENTS : history
+  USERS ||--o{ HUMAN_REVIEWS : performs
+  USERS { uuid id PK }
+  COURSES { uuid id PK }
+  ASSIGNMENTS { uuid id PK }
+  SUBMISSIONS { uuid id PK }
+  SUBMISSION_ASSETS { uuid id PK }
+  RUBRICS { uuid id PK }
+  RUBRIC_VERSIONS { uuid id PK }
+  RUBRIC_CRITERIA { uuid id PK }
+  EVALUATION_JOBS { uuid id PK }
+  EVALUATION_ATTEMPTS { uuid id PK }
+  EVALUATION_RESULTS { uuid id PK }
+  CRITERION_SCORES { uuid id PK }
+  HUMAN_REVIEWS { uuid id PK }
+  EVALUATION_EVENTS { uuid id PK }

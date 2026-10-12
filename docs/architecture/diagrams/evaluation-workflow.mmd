@@ -1,0 +1,17 @@
+flowchart TD
+  A[Queued job] --> B[Lease + attempt record]
+  B --> C[Fetch immutable assets]
+  C --> D[Validate, scan, safely extract]
+  D --> E[Classify / exclude unsafe or irrelevant files]
+  E --> F[Parse, chunk, metadata]
+  F --> G[Retrieve evidence per rubric criterion]
+  G --> H[LLM emits schema-validated criterion scores]
+  H --> I{Confidence / policy checks}
+  I -->|pass| J[Deterministic weighted aggregate]
+  I -->|uncertain| K[REVIEW_REQUIRED]
+  J --> L[Persist immutable result + provenance]
+  K --> L
+  L --> M[Notify student and reviewer]
+  D -->|permanent invalid input| X[FAILED terminal]
+  H -->|transient provider error| R[Retry with backoff]
+  R --> B

@@ -1,0 +1,31 @@
+sequenceDiagram
+  actor S as Student
+  participant API as FastAPI API
+  participant DB as PostgreSQL
+  participant Obj as S3
+  participant Relay as Outbox relay
+  participant Q as SQS
+  participant W as Worker
+  participant L as LLM adapter
+  S->>API: POST submission metadata
+  API->>DB: Insert CREATED submission
+  API-->>S: 201 submission id
+  S->>API: Request upload intent
+  API-->>S: Short-lived scoped upload URL
+  S->>Obj: Upload bytes (multipart for large files)
+  S->>API: Complete upload with asset IDs
+  API->>Obj: Verify key, size, checksum, scan state
+  API->>DB: Persist assets; QUEUED job + outbox in transaction
+  API-->>S: 202 evaluation id
+  Relay->>DB: Claim unpublished outbox row
+  Relay->>Q: Publish evaluation id (at least once)
+  Q->>W: Deliver message
+  W->>DB: Lease job / record attempt
+  W->>Obj: Read immutable assets
+  W->>L: Bounded evidence-based criterion requests
+  L-->>W: Structured scores + evidence
+  W->>DB: Validate, aggregate deterministically, persist result
+  W-->>Q: Delete only after durable commit
+  S->>API: GET evaluation/result
+  API->>DB: Read authorized result
+  API-->>S: Status/result
